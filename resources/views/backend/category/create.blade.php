@@ -11,7 +11,10 @@
                                 <div class="card-header-2">
                                     <h5>Category Information</h5>
                                 </div>
+                                @if(session('success'))
+                                    <div class="alert alert-primary">{{session('success')  }}</div>
 
+                                @endif
                                 <form class="theme-form theme-form-2 mega-form" enctype="multipart/form-data" method="POST" action="{{ route('category.store') }}">
                                     @csrf
                                     <div class="mb-4 row align-items-center">

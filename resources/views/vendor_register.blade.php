@@ -1,19 +1,23 @@
 @extends('layouts.master')
 
 @section('content')
-
 <div class="container mt-5">
     <div class="row">
         <div class="col-12">
             <div class="card">
            <div class="card-header">
-           Customer Register Form
+          Apply to become a vendor
            </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
+                    @if(session('success'))
+                     <div class="alert alert-success">
+                       {{ session('success') }}
+                    </div>
+                    @endif
+                    <form method="POST" action="{{ route('vendor.register.post') }}">
                         @csrf
                         <div class="mb-3">
-                          <label  class="form-label">Name</label>
+                          <label  class="form-label">Company Name</label>
                           <input type="text" class="form-control" name="name" value="{{ old('name') }}" >
                           @error('name')
                           <small class="text-danger">{{ $message }}</small>
@@ -43,10 +47,10 @@
                             <input type="password" class="form-control" name="password_confirmation" >
                           </div>
 
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary">Apply</button>
                       </form>
                       <p>
-                      Allready have an account?
+                      Allready have an vendor account?
                         <a href="{{ route ('login') }}"> Login</a>
                     </p>
                 </div>
@@ -55,5 +59,4 @@
         </div>
     </div>
 </div>
-
 @endsection

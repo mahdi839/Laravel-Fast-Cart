@@ -6,12 +6,27 @@ use Illuminate\Http\Request;
 use App\Models\Contact;
 use Carbon\Carbon;
 use App\Http\Requests\ContactpostRequest;
+use App\Models\Product;
+use App\Models\Product_photo;
+use App\Models\User;
+
 class fron_endController extends Controller
 {
     //
     function index()
     {
-        echo view('index');
+      $products =  Product::latest()->take(8)->get();
+        echo view('index',compact('products'));
+    }
+    function product_details($id)
+    {
+        $product= Product::findOrFail($id);
+        $vendor =  User::find($product->user_id);
+       return view('product_details',[
+        'product'=>  $product,
+        'product_photos'=>Product_photo::where('product_id',$id)->get(),
+         'vendor'=>$vendor
+       ]);
     }
     function about()
     {

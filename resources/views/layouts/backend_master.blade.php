@@ -154,15 +154,18 @@
                         <li class="profile-nav onhover-dropdown pe-0 me-0">
                             <div class="media profile-media">
                                 @if (auth()->user()->profile_photo)
-                                <img class="user-profile rounded-circle" src="{{ asset('uploads/profile_photos') }}/{{auth()->user()->profile_photo  }}" />
+                                    <img class="user-profile rounded-circle"
+                                        src="{{ asset('uploads/profile_photos') }}/{{ auth()->user()->profile_photo }}" />
                                 @else
-                                <img class="user-profile rounded-circle" src="{{ Avatar::create(auth()->user()->name)->toBase64() }}" />
+                                    <img class="user-profile rounded-circle"
+                                        src="{{ Avatar::create(auth()->user()->name)->toBase64() }}" />
                                 @endif
 
 
                                 <div class="user-name-hide media-body">
                                     <span>{{ auth()->user()->name }}</span>
-                                    <p class="mb-0 font-roboto">Admin<i class="middle ri-arrow-down-s-line"></i></p>
+                                    <p class="mb-0 font-roboto">{{ auth()->user()->role }}<i
+                                            class="middle ri-arrow-down-s-line"></i></p>
                                 </div>
                             </div>
                             <ul class="profile-dropdown onhover-show-div">
@@ -235,23 +238,7 @@
                                         <span>Dashboard</span>
                                     </a>
                                 </li>
-
-                                <li class="sidebar-list">
-                                    <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
-                                        <i class="ri-store-3-line"></i>
-                                        <span>Product</span>
-                                    </a>
-                                    <ul class="sidebar-submenu">
-                                        <li>
-                                            <a href="products.html">Prodcts</a>
-                                        </li>
-
-                                        <li>
-                                            <a href="add-new-product.html">Add New Products</a>
-                                        </li>
-                                    </ul>
-                                </li>
-
+                                @if (auth()->user()->role == 'admin')
                                 <li class="sidebar-list">
                                     <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                                         <i class="ri-list-check-2"></i>
@@ -259,7 +246,7 @@
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a href="category.html">Category List</a>
+                                            <a href="{{ route('category.index') }}">Category List</a>
                                         </li>
 
                                         <li>
@@ -267,7 +254,28 @@
                                         </li>
                                     </ul>
                                 </li>
+                                @endif
 
+                                @if (auth()->user()->role == 'vendor')
+                                <li class="sidebar-list">
+                                    <a class="linear-icon-link sidebar-link sidebar-title"
+                                        href="javascript:void(0)">
+                                        <i class="ri-store-3-line"></i>
+                                        <span>Product</span>
+                                    </a>
+                                    <ul class="sidebar-submenu">
+                                        <li>
+                                            <a href="{{ route('product.index') }}">Prodcts List</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="{{ route('product.create') }}">Add New Products</a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+
+                                @endif
                                 <li class="sidebar-list">
                                     <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                                         <i class="ri-list-settings-line"></i>
@@ -355,7 +363,8 @@
                                     </a>
                                 </li>
                                 <li class="sidebar-list">
-                                    <a class="sidebar-link sidebar-title link-nav" href="{{ url('/') }}" target='_blank' >
+                                    <a class="sidebar-link sidebar-title link-nav" href="{{ url('/') }}"
+                                        target='_blank'>
                                         <i class="ri-window-line"></i>
                                         <span>Visit Website</span>
                                     </a>

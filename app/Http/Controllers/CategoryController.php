@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
+use Intervention\Image\ImageManagerStatic as Image;
+use Illuminate\Support\Str;
 class CategoryController extends Controller
 {
     /**
@@ -13,7 +14,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+       $deleted_categories =  Category::onlyTrashed()->get();
+       $categories =  Category::all();
+       return view('backend.category.index',compact('categories', 'deleted_categories'));
     }
 
     /**
@@ -32,17 +35,29 @@ class CategoryController extends Controller
         $request->validate([
             'category_name' => 'required|unique:categories,category_name',
             'category_details' => 'required',
-            'category_icon' => 'required'
+            'category_icon' => 'required|file|mimes:png,jpg,jpeg'
 
         ]);
+        // slug generation start
+
+      $slug = Str::slug($request->category_name);
+
+        // slug generation end
+
+        // photo upload start
+         $generated_category_icon_name = date('Y_m_d')."".time().Str::random(5).'.'.$request->file('category_icon')->getClientOriginalExtension();
+
+        Image::make($request->file('category_icon'))->resize(200, 200)->save(base_path('public/uploads/category_icons/'.$generated_category_icon_name));
+            // photo upload end
 
         Category::insert([
             'category_name' => $request->category_name,
+            'category_slug' => $slug,
             'category_details' => $request->category_details,
-            'category_icon' =>'hudai',
+            'category_icon' => $generated_category_icon_name,
             'created_at' => Carbon::now(),
         ]);
-        return 'Done';
+        return back()->with('success','New category added');
     }
 
     /**
@@ -50,7 +65,8 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+
+       return view('backend.category.show',compact('category'));
     }
 
     /**
@@ -58,7 +74,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        return view('backend.category.edit',compact('category'));
     }
 
     /**
@@ -66,7 +82,11 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+
+        $category->category_name = $request->category_name;
+        $category->category_details = $request->category_details;
+        $category->save();
+        return back();
     }
 
     /**
@@ -74,6 +94,20 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+
+
+
+        $category->delete();
+        return back();
+    }
+    public function restore($id){
+     Category::onlyTrashed()->where('id',$id)->restore();
+     return back();
+    }
+     public function parmanent_delete($id){
+
+       unlink(base_path('public/uploads/category_icons/'). Category::onlyTrashed()->where('id',$id)->first()->category_icon);
+     Category::onlyTrashed()->where('id',$id)->forceDelete();
+     return back();
     }
 }

@@ -75,7 +75,7 @@ class ProfileController extends Controller
         // photo upload start
          $generated_profile_photo_name = date('Y_m_d')."".time().Str::random(5).'.'.$request->file('profile_photo')->getClientOriginalExtension();
          Image::make($request->file('profile_photo'))->resize(200, 200)->save(base_path('public/uploads/profile_photos/'.$generated_profile_photo_name));
-             // photo upload start
+             // photo upload end
 
             //  database
            echo User::find(auth()->user()->id)->update([
